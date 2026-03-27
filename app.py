@@ -71,6 +71,11 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 # Routes
 # ─────────────────────────────────────────────
 
+@app.head("/")
+async def index_head():
+    """Render port-detection probe."""
+    return {}
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     """Serve the main UI."""
