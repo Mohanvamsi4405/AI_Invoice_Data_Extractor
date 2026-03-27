@@ -4,6 +4,7 @@ Excel handler — all invoice fields as flat columns, one row per invoice.
 
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any
@@ -16,7 +17,7 @@ from .schemas import InvoiceData
 
 logger = logging.getLogger(__name__)
 
-EXCEL_PATH = "data/invoices.xlsx"
+EXCEL_PATH = os.getenv("EXCEL_PATH", str(Path(__file__).resolve().parent.parent / "data" / "invoices.xlsx"))
 
 # ── Column map: (Excel Header, InvoiceData field | special key) ──────────────
 #   special keys: "__sno__", "__filename__", "__extracted_at__", "__items__"

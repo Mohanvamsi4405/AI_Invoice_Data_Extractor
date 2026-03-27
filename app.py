@@ -35,9 +35,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-UPLOAD_DIR = Path("uploads")
+# Always resolve relative to this file — works on Render, local, Docker
+BASE_DIR = Path(__file__).resolve().parent
+
+UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
-Path("data").mkdir(exist_ok=True)
+(BASE_DIR / "data").mkdir(exist_ok=True)
 
 ALLOWED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".tiff", ".tif", ".bmp", ".webp"}
 MAX_FILE_SIZE_MB = 20
@@ -60,8 +63,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
 # ─────────────────────────────────────────────
