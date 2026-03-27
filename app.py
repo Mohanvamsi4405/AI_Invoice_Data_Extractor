@@ -79,7 +79,7 @@ async def index_head():
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     """Serve the main UI."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.post("/api/extract", response_model=InvoiceResponse)
