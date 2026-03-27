@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Invoice Reader — Powered by Groq</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">AI Invoice Reader</span>
+      <span class="logo-badge">Powered by Groq</span>
+    </div>
+    <nav class="header-nav">
+      <a href="#upload-section" class="nav-link">Extract</a>
+      <a href="#records-section" class="nav-link">Records</a>
+      <a href="/api/docs" target="_blank" class="nav-link">API Docs</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ─── HERO ───────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Extract Invoice Data<br /><span class="gradient-text">Instantly with AI</span></h1>
+    <p class="hero-sub">Upload a PDF or image — our AI extracts vendor, date, amount &amp; line items in seconds.</p>
+    <div class="feature-pills">
+      <span class="pill">📄 PDF &amp; Images</span>
+      <span class="pill">🤖 LLM Extraction</span>
+      <span class="pill">📊 Excel Export</span>
+      <span class="pill">⚡ Groq Speed</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MAIN CONTENT ────────────────────────────────────────── -->
+<main class="main-content">
+
+  <!-- Upload Section -->
+  <section id="upload-section" class="card">
+    <div class="card-header">
+      <span class="card-icon">📤</span>
+      <h2>Upload Invoice</h2>
+    </div>
+    <div class="card-body">
+
+      <!-- API Key Input -->
+      <div class="form-group">
+        <label class="form-label" for="apiKey">
+          <span class="label-icon">🔑</span> Groq API Key
+          <span class="label-hint">(or set GROQ_API_KEY env var)</span>
+        </label>
+        <div class="input-wrapper">
+          <input type="password" id="apiKey" class="form-input" placeholder="gsk_..." />
+          <button class="toggle-key-btn" onclick="toggleKey()" title="Show/Hide key">👁</button>
+        </div>
+      </div>
+
+      <!-- Model Selector -->
+      <div class="form-group">
+        <label class="form-label" for="modelSelect">
+          <span class="label-icon">🧠</span> Groq Model
+        </label>
+        <select id="modelSelect" class="form-input form-select">
+          <option value="llama-3.3-70b-versatile" selected>Llama 3.3 70B Versatile (Recommended)</option>
+          <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant (Faster)</option>
+          <option value="mixtral-8x7b-32768">Mixtral 8x7B (Long Context)</option>
+          <option value="gemma2-9b-it">Gemma 2 9B IT</option>
+        </select>
+      </div>
+
+      <!-- Drop Zone -->
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-icon">📁</div>
+        <p class="drop-title">Drag &amp; drop your invoice here</p>
+        <p class="drop-sub">or click to browse files</p>
+        <p class="drop-types">Supports: PDF, PNG, JPG, JPEG, TIFF, BMP, WEBP &bull; Max 20MB</p>
+        <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.tiff,.tif,.bmp,.webp" hidden />
+      </div>
+
+      <!-- File Preview -->
+      <div class="file-preview" id="filePreview" style="display:none">
+        <div class="file-info">
+          <span class="file-icon" id="fileIcon">📄</span>
+          <div class="file-meta">
+            <span class="file-name" id="fileName"></span>
+            <span class="file-size" id="fileSize"></span>
+          </div>
+          <button class="remove-file-btn" onclick="clearFile()">✕</button>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button class="submit-btn" id="submitBtn" onclick="processInvoice()" disabled>
+        <span class="btn-icon">⚡</span>
+        <span class="btn-text">Extract Invoice Data</span>
+      </button>
+
+    </div>
+  </section>
+
+  <!-- Processing Steps -->
+  <section class="card" id="stepsCard" style="display:none">
+    <div class="card-header">
+      <span class="card-icon">⚙️</span>
+      <h2>Processing</h2>
+    </div>
+    <div class="card-body">
+      <div class="steps-list" id="stepsList"></div>
+      <div class="progress-bar-wrapper" id="progressWrapper">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  <section class="card result-card" id="resultCard" style="display:none">
+    <div class="card-header result-header">
+      <span class="card-icon">✅</span>
+      <h2>Extraction Results</h2>
+      <div class="result-actions">
+        <button class="action-btn outline" onclick="loadRecords()">
+          <span>📋</span> View All Records
+        </button>
+        <a class="action-btn primary" href="/api/invoices/download" id="downloadBtn">
+          <span>⬇️</span> Download Excel
+        </a>
+      </div>
+    </div>
+    <div class="card-body" id="resultBody"></div>
+  </section>
+
+  <!-- Error Section -->
+  <section class="card error-card" id="errorCard" style="display:none">
+    <div class="card-header">
+      <span class="card-icon">❌</span>
+      <h2>Extraction Failed</h2>
+    </div>
+    <div class="card-body">
+      <div class="error-message" id="errorMessage"></div>
+    </div>
+  </section>
+
+  <!-- Records Section -->
+  <section class="card" id="records-section">
+    <div class="card-header">
+      <span class="card-icon">📊</span>
+      <h2>Invoice Records</h2>
+      <div class="result-actions">
+        <button class="action-btn outline" onclick="loadRecords()">
+          <span>🔄</span> Refresh
+        </button>
+        <a class="action-btn primary" href="/api/invoices/download">
+          <span>⬇️</span> Download Excel
+        </a>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="recordsContainer">
+        <div class="empty-state">
+          <div class="empty-icon">📂</div>
+          <p>No invoices extracted yet. Upload one above to get started!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────── -->
+<footer class="footer">
+  <p>AI Invoice Reader &bull; Built with FastAPI + LangChain + Groq &bull; <a href="/api/docs">API Docs</a></p>
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>

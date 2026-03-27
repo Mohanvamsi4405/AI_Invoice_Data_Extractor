@@ -1,0 +1,26 @@
+# Python 3.12 — production requirements
+
+# ── Web Framework ──────────────────────────────────────────
+fastapi
+uvicorn[standard]
+python-multipart
+jinja2
+
+# ── Text Extraction ─────────────────────────────────────────
+pdfplumber          # PDF text extraction
+easyocr             # Deep-learning OCR for images (PNG/JPG/TIFF etc.)
+Pillow              # Image processing
+
+# ── LangChain + Groq ────────────────────────────────────────
+langchain
+langchain-core
+langchain-groq
+
+# ── Excel ────────────────────────────────────────────────────
+openpyxl
+
+# ── Utilities ────────────────────────────────────────────────
+python-dotenv
+pydantic
+httpx
+aiofiles
