@@ -1,23 +1,21 @@
-# Render.com deployment configuration
-# Docs: https://render.com/docs/render-yaml-spec
-
 services:
   - type: web
     name: ai-invoice-reader
-    runtime: docker
-    dockerfilePath: ./Dockerfile
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
     envVars:
       - key: GROQ_API_KEY
-        sync: false          # Set this in Render dashboard → Environment
+        sync: false
       - key: ENV
         value: production
-      - key: PORT
-        value: 10000         # Render uses port 10000 internally
+      - key: PYTHON_VERSION
+        value: 3.11.0
       - key: EXCEL_PATH
-        value: /app/data/invoices.xlsx
+        value: /opt/render/project/src/data/invoices.xlsx
     disk:
       name: invoice-data
-      mountPath: /app/data
+      mountPath: /opt/render/project/src/data
       sizeGB: 1
     healthCheckPath: /api/health
     autoDeploy: true
