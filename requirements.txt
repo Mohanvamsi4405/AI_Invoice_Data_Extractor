@@ -1,4 +1,4 @@
-# Python 3.12 — production requirements
+# Python 3.11 — Render native Python compatible
 
 # ── Web Framework ──────────────────────────────────────────
 fastapi
@@ -7,9 +7,10 @@ python-multipart
 jinja2
 
 # ── Text Extraction ─────────────────────────────────────────
-pdfplumber          # PDF text extraction
-easyocr             # Deep-learning OCR for images (PNG/JPG/TIFF etc.)
+pdfplumber          # PDF text extraction (pure Python, no system deps)
 Pillow              # Image processing
+pytesseract         # Image OCR (lightweight wrapper around Tesseract)
+pdf2image           # Convert PDF pages to images if needed
 
 # ── LangChain + Groq ────────────────────────────────────────
 langchain
